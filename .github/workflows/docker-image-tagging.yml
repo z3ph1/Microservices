@@ -15,17 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Create and Push Git Tag
-      - name: Create and Push Git Tag
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          TAG_NAME="v$(date +%Y%m%d%H%M%S)"
-          echo "Generated TAG_NAME: $TAG_NAME"
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag $TAG_NAME
-          git push https://${GH_PAT}@github.com/z3ph1/Microservices.git $TAG_NAME
+      # Step 2: Set Image Tag Name
+      - name: Set Image Tag
+        run: echo "TAG_NAME=v$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
       # Step 3: Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -34,24 +26,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: Debug File System
-      - name: Debug File System
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Files and folders in current directory:"
-          ls -R
-
-      # Step 5: Build Docker Image
+      # Step 4: Build Docker Image
       - name: Build Docker Image
         run: |
           IMAGE_NAME="fateseph/microservices"
-          TAG_NAME="v$(date +%Y%m%d%H%M%S)"
-          docker build -t $IMAGE_NAME:$TAG_NAME -f Microservices/Dockerfile .
+          docker build -t $IMAGE_NAME:${{ env.TAG_NAME }} -f ./Microservices/Dockerfile Microservices
 
-      # Step 6: Push Docker Image to Registry
+      # Step 5: Push Docker Image to Registry
       - name: Push Docker Image
         run: |
           IMAGE_NAME="fateseph/microservices"
-          TAG_NAME="v$(date +%Y%m%d%H%M%S)"
-          docker push $IMAGE_NAME:$TAG_NAME
+          docker push $IMAGE_NAME:${{ env.TAG_NAME }}
