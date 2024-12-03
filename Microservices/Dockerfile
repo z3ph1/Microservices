@@ -2,13 +2,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /app
 
-# Copy the project files to the container
-COPY *.sln .
-COPY Microservices.csproj .
-COPY ./ ./
+# Copy the solution and project files
+COPY Microservices.sln .
+COPY Microservices/*.csproj ./Microservices/
 
 # Restore dependencies
 RUN dotnet restore
+
+# Copy the rest of the application files
+COPY . .
 
 # Build the application in Release mode
 RUN dotnet publish -c Release -o out
@@ -17,7 +19,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 
-# Copy the built application from the build stage
+# Copy the published application from the build stage
 COPY --from=build /app/out .
 
 # Expose port 80 for the application
