@@ -10,7 +10,7 @@ COPY Microservices/*.csproj ./Microservices/
 RUN dotnet restore
 
 # Copy the rest of the application files
-COPY . .
+COPY Microservices ./Microservices/
 
 # Build the application in Release mode
 RUN dotnet publish -c Release -o out
