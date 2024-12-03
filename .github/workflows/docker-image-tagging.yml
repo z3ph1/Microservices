@@ -9,6 +9,7 @@ on:
 jobs:
   tag-and-push:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       # Step 1: Checkout the repository
       - name: Checkout code
