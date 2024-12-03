@@ -47,7 +47,7 @@ jobs:
         run: |
           IMAGE_NAME="fateseph/microservices"
           TAG_NAME="v$(date +%Y%m%d%H%M%S)"
-          docker build -t $IMAGE_NAME:$TAG_NAME -f Microservices/Microservices/Dockerfile Microservices/Microservices
+          docker build -t $IMAGE_NAME:$TAG_NAME -f ./Microservices/Dockerfile Microservices
 
       # Step 6: Push Docker Image to Registry
       - name: Push Docker Image
